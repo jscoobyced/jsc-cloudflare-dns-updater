@@ -1,0 +1,29 @@
+{
+  "name": "jsc-node-scheduler",
+  "version": "1.0.0",
+  "description": "Run a node JS application on a scheduler.",
+  "main": "index.js",
+  "repository": "https://github.com/jscoobyced/jsc-node-scheduler",
+  "author": "Cédric Rochefolle",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "dev": "node -r ts-node/register --env-file=.env.local ./src/index.ts",
+    "test": "node -r ts-node/register ./src/index.ts",
+    "lint": "eslint --fix ./src"
+  },
+  "dependencies": {
+    "@types/node": "^20.11.20",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^1.6.2",
+    "@types/express": "^4.17.21",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "ts-node": "^10.9.2"
+  }
+}

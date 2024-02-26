@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jsc-node-scheduler-pv-claim
+  namespace: jsc-ns
+  labels:
+    app: jsc-node-scheduler
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jsc-node-scheduler
+  namespace: jsc-ns
+  labels:
+    app: jsc-node-scheduler
+spec:
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: jsc-node-scheduler
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      namespace: jsc-ns
+      labels:
+        app: jsc-node-scheduler
+        tier: backend
+    spec:
+      containers:
+        - image: jscdroiddev/jsc-node-scheduler:latest
+          name: jsc-node-scheduler
+          resources:
+            requests:
+              ephemeral-storage: "500Mi"
+            limits:
+              ephemeral-storage: "1Gi"
+          env:
+            - name: TZ
+              value: Asia/Bangkok
+            - name: NODE_ENV
+              value: production
+            - name: STORAGE_PATH
+              value: /data
+            - name: SECRET_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: wl-secret
+                  key: secret_api_key
+          volumeMounts:
+            - name: jsc-node-scheduler-persistent-storage
+              mountPath: /data
+      volumes:
+        - name: jsc-node-scheduler-persistent-storage
+          persistentVolumeClaim:
+            claimName: jsc-node-scheduler-pv-claim
