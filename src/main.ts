@@ -1,4 +1,5 @@
 import { CloudFlareDnsUpdateRecord, IpAddressResponse } from './model'
+import FileStorage from './storage/filestorage'
 
 export const run = async () => {
   const url = process.env.CLOUDFLARE_URL || null
@@ -9,17 +10,44 @@ export const run = async () => {
     return
   }
 
-  const ipAddress = await getIpAddress()
-  if (ipAddress === '') {
-    console.log('No IP address found.')
+  const ipAddressFromApi = await getIpAddressFromApi()
+  if (ipAddressFromApi === '') {
+    console.log('New IP Address found for route.')
     return
   }
-  const domain = 'dev.gawin.io'
 
-  await updateDnsRecord(ipAddress, domain, url, apiKey)
+  const domain = 'dev.gawin.io'
+  await updateDnsForDomain(domain, ipAddressFromApi, url, apiKey)
 }
 
-const getIpAddress = async () => {
+const updateDnsForDomain = async (
+  domain: string,
+  ipAddressFromApi: string,
+  url: string,
+  apiKey: string
+) => {
+  const fileStorage = new FileStorage()
+
+  const path = `./${domain}.txt`
+  const ipAddressFromFile = await getIpAddressFromFile(fileStorage, path)
+
+  if (ipAddressFromFile !== ipAddressFromApi) {
+    fileStorage.storeValue(path, ipAddressFromApi)
+    console.log(`New IP address ${ipAddressFromApi} found for ${domain}.`)
+    await updateDnsRecord(ipAddressFromApi, domain, url, apiKey)
+  } else if (ipAddressFromFile === ipAddressFromApi) {
+    // Skip same address
+    console.log(`No new IP for ${domain}.`)
+    return
+  }
+}
+
+const getIpAddressFromFile = async (fileStorage: FileStorage, path: string) => {
+  const ipAddress = await fileStorage.retrieveValue(path)
+  return ipAddress
+}
+
+const getIpAddressFromApi = async () => {
   const response = await fetch('https://api.ipify.org?format=json')
   const ipAddressResponse: IpAddressResponse = {
     ip: '',
