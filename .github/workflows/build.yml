@@ -8,9 +8,9 @@ on:
     types: [published]
 
 env:
-  IMAGE_NAME: jsc-node-scheduler
-  IMAGE_TITLE: JSC Node scheduler
-  IMAGE_DESCRIPTION: Run a node JS application on a scheduler
+  IMAGE_NAME: jsc-cloudflare-dns-updater
+  IMAGE_TITLE: JSC Cloudflare DNS updater
+  IMAGE_DESCRIPTION: Update Cloudflare DNS from current external Ip Address.
 
 jobs:
   tests:

@@ -1,9 +1,9 @@
 {
-  "name": "jsc-node-scheduler",
+  "name": "jsc-cloudflare-dns-updater",
   "version": "1.0.0",
-  "description": "Run a node JS application on a scheduler.",
+  "description": "Update Cloudflare DNS from current external Ip Address.",
   "main": "index.js",
-  "repository": "https://github.com/jscoobyced/jsc-node-scheduler",
+  "repository": "https://github.com/jscoobyced/jsc-cloudflare-dns-updater",
   "author": "Cédric Rochefolle",
   "license": "MIT",
   "scripts": {
