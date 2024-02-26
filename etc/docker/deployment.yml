@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jsc-node-scheduler-pv-claim
+  name: jsc-cloudflare-dns-pv-claim
   namespace: jsc-ns
   labels:
-    app: jsc-node-scheduler
+    app: jsc-cloudflare-dns
 spec:
   accessModes:
     - ReadWriteOnce
@@ -15,15 +15,15 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jsc-node-scheduler
+  name: jsc-cloudflare-dns
   namespace: jsc-ns
   labels:
-    app: jsc-node-scheduler
+    app: jsc-cloudflare-dns
 spec:
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: jsc-node-scheduler
+      app: jsc-cloudflare-dns
       tier: backend
   strategy:
     type: Recreate
@@ -31,12 +31,12 @@ spec:
     metadata:
       namespace: jsc-ns
       labels:
-        app: jsc-node-scheduler
+        app: jsc-cloudflare-dns
         tier: backend
     spec:
       containers:
-        - image: jscdroiddev/jsc-node-scheduler:latest
-          name: jsc-node-scheduler
+        - image: jscdroiddev/jsc-cloudflare-dns:latest
+          name: jsc-cloudflare-dns
           resources:
             requests:
               ephemeral-storage: "500Mi"
@@ -49,15 +49,20 @@ spec:
               value: production
             - name: STORAGE_PATH
               value: /data
-            - name: SECRET_API_KEY
+            - name: CLOUDFLARE_URL
               valueFrom:
                 secretKeyRef:
-                  name: wl-secret
-                  key: secret_api_key
+                  name: jcd-secret
+                  key: cloudflare_url
+            - name: CLOUDFLARE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jcd-secret
+                  key: cloudflare_api_key
           volumeMounts:
-            - name: jsc-node-scheduler-persistent-storage
+            - name: jsc-cloudflare-dns-persistent-storage
               mountPath: /data
       volumes:
-        - name: jsc-node-scheduler-persistent-storage
+        - name: jsc-cloudflare-dns-persistent-storage
           persistentVolumeClaim:
-            claimName: jsc-node-scheduler-pv-claim
+            claimName: jsc-cloudflare-dns-pv-claim
