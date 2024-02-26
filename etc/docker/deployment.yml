@@ -1,29 +1,15 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jsc-cloudflare-dns-pv-claim
-  namespace: jsc-ns
-  labels:
-    app: jsc-cloudflare-dns
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 250Mi
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jsc-cloudflare-dns
+  name: jsc-cloudflare-dns-updater
   namespace: jsc-ns
   labels:
-    app: jsc-cloudflare-dns
+    app: jsc-cloudflare-dns-updater
 spec:
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: jsc-cloudflare-dns
+      app: jsc-cloudflare-dns-updater
       tier: backend
   strategy:
     type: Recreate
@@ -31,12 +17,12 @@ spec:
     metadata:
       namespace: jsc-ns
       labels:
-        app: jsc-cloudflare-dns
+        app: jsc-cloudflare-dns-updater
         tier: backend
     spec:
       containers:
-        - image: jscdroiddev/jsc-cloudflare-dns:latest
-          name: jsc-cloudflare-dns
+        - image: jscdroiddev/jsc-cloudflare-dns-updater:latest
+          name: jsc-cloudflare-dns-updater
           resources:
             requests:
               ephemeral-storage: "500Mi"
@@ -59,10 +45,3 @@ spec:
                 secretKeyRef:
                   name: jcd-secret
                   key: cloudflare_api_key
-          volumeMounts:
-            - name: jsc-cloudflare-dns-persistent-storage
-              mountPath: /data
-      volumes:
-        - name: jsc-cloudflare-dns-persistent-storage
-          persistentVolumeClaim:
-            claimName: jsc-cloudflare-dns-pv-claim
