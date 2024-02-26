@@ -1,4 +1,4 @@
-JSC Node Scheduler
+JSC Cloudflare DNS Updater
 ---
 
-Run a node JS application on a scheduler.
+Check external IP address then update Cloudflare DNS.
