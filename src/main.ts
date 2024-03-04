@@ -6,13 +6,13 @@ export const run = async () => {
   const apiKey = process.env.CLOUDFLARE_API_KEY || null
 
   if (url === null || apiKey === null) {
-    console.log('Url or API key is NULL.')
+    log('Url or API key is NULL.')
     return
   }
 
   const ipAddressFromApi = await getIpAddressFromApi()
   if (ipAddressFromApi === '') {
-    console.log('New IP Address found for route.')
+    log('New IP Address found for route.')
     return
   }
 
@@ -33,11 +33,11 @@ const updateDnsForDomain = async (
 
   if (ipAddressFromFile !== ipAddressFromApi) {
     fileStorage.storeValue(path, ipAddressFromApi)
-    console.log(`New IP address ${ipAddressFromApi} found for ${domain}.`)
+    log(`New IP address ${ipAddressFromApi} found for ${domain}.`)
     await updateDnsRecord(ipAddressFromApi, domain, url, apiKey)
   } else if (ipAddressFromFile === ipAddressFromApi) {
     // Skip same address
-    console.log(`No new IP for ${domain}.`)
+    log(`No new IP for ${domain}.`)
     return
   }
 }
@@ -84,9 +84,34 @@ const updateDnsRecord = async (
   })
 
   if (response.status === 200) {
-    console.log(`Record ${domain} updated to ${ipAddress} successfully`)
+    log(`Record ${domain} updated to ${ipAddress} successfully`)
   } else {
     const result = await response.text()
-    console.log(`Record ${domain} NOT updated successfully:\n${result}`)
+    log(`Record ${domain} NOT updated successfully:\n${result}`)
   }
+}
+
+const padTo2Digits = (num: number) => {
+  return num.toString().padStart(2, '0')
+}
+
+const formatDate = (date: Date) => {
+  return (
+    [
+      date.getFullYear(),
+      padTo2Digits(date.getMonth() + 1),
+      padTo2Digits(date.getDate()),
+    ].join('-') +
+    '-' +
+    [
+      padTo2Digits(date.getHours()),
+      padTo2Digits(date.getMinutes()),
+      padTo2Digits(date.getSeconds()),
+    ].join('')
+  )
+}
+
+const log = (message: string) => {
+  const date = formatDate(new Date())
+  console.log(date, message)
 }
