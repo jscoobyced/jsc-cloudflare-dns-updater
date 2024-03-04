@@ -101,7 +101,7 @@ const formatDate = (date: Date) => {
       date.getFullYear(),
       padTo2Digits(date.getMonth() + 1),
       padTo2Digits(date.getDate()),
-    ].join('-') +
+    ].join('') +
     '-' +
     [
       padTo2Digits(date.getHours()),
