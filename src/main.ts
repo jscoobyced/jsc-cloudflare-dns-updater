@@ -17,8 +17,13 @@ export const run = async () => {
   }
 
   const domain = ['dev.gawin.io', 'narok.io']
-  for (const domainName of domain) {
-    await updateDnsForDomain(domainName, ipAddressFromApi, url, apiKey)
+  const apiKeys =  apiKey.split(',')
+  if(apiKeys.length !== domain.length) {
+    log('API keys and domains length do not match.')
+    return
+  }
+  for (let i = 0; i < domain.length; i++) {
+    await updateDnsForDomain(domain[i], ipAddressFromApi, url, apiKeys[i])
   }
 }
 
