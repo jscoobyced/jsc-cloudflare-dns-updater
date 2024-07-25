@@ -16,8 +16,10 @@ export const run = async () => {
     return
   }
 
-  const domain = 'dev.gawin.io'
-  await updateDnsForDomain(domain, ipAddressFromApi, url, apiKey)
+  const domain = ['dev.gawin.io', 'narok.io']
+  for (const domainName of domain) {
+    await updateDnsForDomain(domainName, ipAddressFromApi, url, apiKey)
+  }
 }
 
 const updateDnsForDomain = async (
