@@ -4,8 +4,9 @@ import FileStorage from './storage/filestorage'
 export const run = async () => {
   const url = process.env.CLOUDFLARE_URL || null
   const apiKey = process.env.CLOUDFLARE_API_KEY || null
+  const domains = process.env.DOMAINS || null
 
-  if (url === null || apiKey === null) {
+  if (url === null || apiKey === null || domains === null) {
     log('Url or API key is NULL.')
     return
   }
@@ -16,19 +17,19 @@ export const run = async () => {
     return
   }
 
-  const domain = ['dev.gawin.io', 'narok.io']
   const apiKeys =  apiKey.split(',')
   const urls = url.split(',');
-  if(apiKeys.length !== domain.length) {
+  const allDomains = domains.split(',');
+  if(apiKeys.length !== allDomains.length) {
     log('API keys and domains length do not match.')
     return
   }
-  if(urls.length !== domain.length) {
+  if(urls.length !== allDomains.length) {
     log('URLs and domains length do not match.')
     return
   }
-  for (let i = 0; i < domain.length; i++) {
-    await updateDnsForDomain(domain[i], ipAddressFromApi, urls[i], apiKeys[i])
+  for (let i = 0; i < allDomains.length; i++) {
+    await updateDnsForDomain(allDomains[i], ipAddressFromApi, urls[i], apiKeys[i])
   }
 }
 
